@@ -30,11 +30,11 @@ func printFile(filename string) {
 	}
 	defer file.Close()
 
-	p:= pipeline.ReaderSource(file, -1)
+	p := pipeline.ReaderSource(file, -1)
 	count := 0
 	for v := range p {
 		fmt.Println(v)
-		count ++
+		count++
 		if count >= 100 {
 			break
 		}
@@ -43,7 +43,7 @@ func printFile(filename string) {
 
 func writeToFile(p <-chan int, filename string) {
 	file, err := os.Create(filename)
-	if err!=nil {
+	if err != nil {
 		panic(err)
 	}
 	defer file.Close() // 先进后出
@@ -57,7 +57,7 @@ func writeToFile(p <-chan int, filename string) {
 
 func createPipeline(
 	filename string,
-	fileSize, chunkCount int) <-chan int{
+	fileSize, chunkCount int) <-chan int {
 	chunkSize := fileSize / chunkCount
 
 	// init
@@ -65,12 +65,12 @@ func createPipeline(
 
 	sortResults := []<-chan int{}
 
-	for i := 0; i<chunkCount; i++{
+	for i := 0; i < chunkCount; i++ {
 		file, err := os.Open(filename)
-		if err!=nil {
+		if err != nil {
 			panic(err)
 		}
-		file.Seek(int64(i * chunkSize), 0)
+		file.Seek(int64(i*chunkSize), 0)
 
 		source := pipeline.ReaderSource(bufio.NewReader(file), chunkSize)
 
@@ -80,7 +80,7 @@ func createPipeline(
 }
 func createNetworkPipeline(
 	filename string,
-	fileSize, chunkCount int) <-chan int{
+	fileSize, chunkCount int) <-chan int {
 	chunkSize := fileSize / chunkCount
 
 	// init
@@ -88,16 +88,16 @@ func createNetworkPipeline(
 
 	sortAddr := [] string{}
 
-	for i := 0; i<chunkCount; i++{
+	for i := 0; i < chunkCount; i++ {
 		file, err := os.Open(filename)
-		if err!=nil {
+		if err != nil {
 			panic(err)
 		}
-		file.Seek(int64(i * chunkSize), 0)
+		file.Seek(int64(i*chunkSize), 0)
 
 		source := pipeline.ReaderSource(bufio.NewReader(file), chunkSize)
 
-		addr:= ":" + strconv.Itoa(7000+i)
+		addr := ":" + strconv.Itoa(7000+i)
 		pipeline.NetWorkSink(addr, pipeline.InMemSort(source))
 		sortAddr = append(sortAddr, addr)
 	}
@@ -105,7 +105,7 @@ func createNetworkPipeline(
 	//return nil
 
 	sortResults := []<-chan int{}
-	for _, addr := range sortAddr{
+	for _, addr := range sortAddr {
 		sortResults = append(sortResults, pipeline.NetworkSource(addr))
 	}
 	return pipeline.MergeN(sortResults...)

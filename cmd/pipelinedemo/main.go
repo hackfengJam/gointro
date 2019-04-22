@@ -23,19 +23,18 @@ func main() {
 	pipeline.WriterSink(writer, p)
 	writer.Flush()
 
-
 	file, err = os.Open(filename)
 	if err != nil {
 		panic(err)
 	}
 
 	count := 0
-	defer  file.Close()
+	defer file.Close()
 	p = pipeline.ReaderSource(bufio.NewReader(file), -1)
 
-	for v := range p{
+	for v := range p {
 		fmt.Println(v)
-		count ++
+		count++
 		if count >= 100 {
 			break
 		}
@@ -44,9 +43,9 @@ func main() {
 
 func mergeDemo() {
 	p := pipeline.Merge(
-		pipeline.InMemSort(pipeline.ArraySource(3,2,6,7,4)),
-		pipeline.InMemSort(pipeline.ArraySource(7,4,0,3,2,8,13,8)))
-	for v := range p{
+		pipeline.InMemSort(pipeline.ArraySource(3, 2, 6, 7, 4)),
+		pipeline.InMemSort(pipeline.ArraySource(7, 4, 0, 3, 2, 8, 13, 8)))
+	for v := range p {
 		fmt.Println(v)
 	}
 }

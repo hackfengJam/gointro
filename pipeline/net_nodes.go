@@ -28,16 +28,16 @@ func NetWorkSink(addr string, in <-chan int) {
 	}()
 }
 
-func NetworkSource(addr string) <-chan int{
+func NetworkSource(addr string) <-chan int {
 	out := make(chan int)
 	go func() {
-		conn, err:= net.Dial("tcp", addr)
+		conn, err := net.Dial("tcp", addr)
 		if err != nil {
 			panic(err)
 		}
 
 		r := ReaderSource(bufio.NewReader(conn), -1)
-		for v:= range r{
+		for v := range r {
 			out <- v
 		}
 		close(out)
