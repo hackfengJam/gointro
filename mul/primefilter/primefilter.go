@@ -19,8 +19,10 @@ func PrimeFilter(in <-chan int, prime int) chan int {
 	out := make(chan int)
 
 	go func() {
-		if v := <-in; v%prime != 0 {
-			out <- v
+		for {
+			if v := <-in; v%prime != 0 {
+				out <- v
+			}
 		}
 	}()
 	return out
